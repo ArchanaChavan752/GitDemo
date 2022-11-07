@@ -1,0 +1,90 @@
+package rahulshettyacademy.tests;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import rahulshettyacademy.pageObject.CartPage;
+import rahulshettyacademy.pageObject.LandingPage;
+import rahulshettyacademypractice.pageObject.CartPagesample;
+import rahulshettyacademypractice.pageObject.FirstPage;
+import rahulshettyacademypractice.pageObject.Products;
+
+public class PageObjectModelTest {
+
+	public static void main(String[] args) throws InterruptedException {
+		
+		
+		System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Selenium Files\\chromedriver_win32\\chromedriver.exe");
+		WebDriver driver = new ChromeDriver();
+		
+		driver.manage().window().maximize();
+		String productName="ZARA COAT 3";
+		
+		// For First Page:
+		FirstPage firstPage=new FirstPage(driver);
+//		driver.get("https://rahulshettyacademy.com/client");
+		firstPage.goTo();
+		
+//		driver.findElement(By.id("userEmail")).sendKeys("archanachavan752@gmail.com");  // Email
+//		driver.findElement(By.id("userPassword")).sendKeys("jufU2WD@nXgK9fq\r\n");  // Password
+//		driver.findElement(By.id("login")).click();  // Login button
+		firstPage.LoginApp("archanachavan752@gmail.com", "jufU2WD@nXgK9fq\r\n");
+		
+		// For AbstractComponents Page:
+//		WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(5));
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("mb-3")));
+
+//		For Product Catalogue Page:		
+//		List<WebElement> products=driver.findElements(By.className("mb-3"));
+				
+		Products productsCat=new Products(driver);
+		List<WebElement> products=productsCat.getProducts();
+				
+//		Here we have used Stream.. in that will not get the product directly so we have find it deeply..
+		
+//		WebElement prod=products.stream().filter(p->p.findElement(By.cssSelector("b")).getText().equals(productName)).findFirst().orElse(null);
+//		 Add to Cart Button
+//		In that product will get an two buttons view and Add to Cart, so we have to click on Add to Cart so we have use hare latest locator i.e. last-of-type.
+//		prod.findElement(By.cssSelector(".card-body button:last-of-type")).click();
+		productsCat.addToCart(productName);
+		
+//		It is reusable code it will go in AbstractComponent page.
+//		wait.until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".ng-animating"))));
+		
+		
+//		driver.findElement(By.cssSelector("[routerlink*='cart']")).click();
+		
+//		List<WebElement> cartProducts=driver.findElements(By.cssSelector(".cartSection h3"));
+//		Boolean match= cartProducts.stream().anyMatch(cp->cp.getText().equalsIgnoreCase(productName));
+		CartPagesample cart=new CartPagesample(driver);
+		cart.verifyCartSample(productName);
+		
+//		Assert.assertTrue(match);
+		
+		driver.findElement(By.xpath("//button[contains(text(),'Checkout')]")).click();
+		
+		Actions a= new Actions(driver);
+		a.sendKeys(driver.findElement(By.cssSelector("[placeholder='Select Country']")), "india").build().perform();
+		
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ta-results")));
+		
+		driver.findElement(By.xpath("//button[contains(@class,'ta-item')])[2]")).click();
+		driver.findElement(By.cssSelector(".action__submit")).click();
+		
+		String confirmMessage=driver.findElement(By.cssSelector(".hero-primary")).getText();
+		Assert.assertTrue(confirmMessage.equalsIgnoreCase("THANKYOU FOR THE ORDER."));
+		
+		
+	
+	}
+
+}
